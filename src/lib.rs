@@ -1,5 +1,5 @@
-mod plugin;
 mod config;
+mod plugin;
 
 #[link(wasm_import_module = "dprant")]
 extern "C" {

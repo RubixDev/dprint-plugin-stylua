@@ -7,7 +7,7 @@ use dprint_core::{
     },
     plugins::{FormatResult, PluginInfo, SyncPluginHandler},
 };
-use stylua_lib::{OutputVerification, LineEndings};
+use stylua_lib::{LineEndings, OutputVerification};
 
 use crate::config::Configuration;
 
