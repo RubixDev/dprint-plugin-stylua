@@ -1,6 +1,6 @@
 use dprint_core::configuration::NewLineKind;
 use serde::Serialize;
-use stylua_lib::{CallParenType, CollapseSimpleStatement, IndentType, LineEndings, QuoteStyle};
+use stylua_lib::{CallParenType, CollapseSimpleStatement, IndentType, QuoteStyle};
 
 #[derive(Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -26,13 +26,6 @@ impl From<&Configuration> for stylua_lib::Config {
                 false => IndentType::Spaces,
             })
             .with_indent_width(conf.indent_width as usize)
-            .with_line_endings(match conf.new_line_kind {
-                NewLineKind::Auto | NewLineKind::LineFeed => LineEndings::Unix,
-                NewLineKind::CarriageReturnLineFeed => LineEndings::Windows,
-                // TODO: fix
-                NewLineKind::System if cfg!(windows) => LineEndings::Windows,
-                NewLineKind::System => LineEndings::Unix,
-            })
             .with_quote_style(conf.quote_style)
             .with_call_parentheses(conf.call_parentheses)
             .with_collapse_simple_statement(conf.collapse_simple_statement)

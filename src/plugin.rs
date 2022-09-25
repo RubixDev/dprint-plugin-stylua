@@ -7,7 +7,7 @@ use dprint_core::{
     },
     plugins::{FormatResult, PluginInfo, SyncPluginHandler},
 };
-use stylua_lib::OutputVerification;
+use stylua_lib::{OutputVerification, LineEndings};
 
 use crate::config::Configuration;
 
@@ -110,9 +110,18 @@ impl SyncPluginHandler<Configuration> for StyluaPluginHandler {
         config: &Configuration,
         _format_with_host: impl FnMut(&Path, String, &ConfigKeyMap) -> FormatResult,
     ) -> FormatResult {
+        let stylua_config = stylua_lib::Config::from(config).with_line_endings(
+            match configuration::resolve_new_line_kind(file_text, config.new_line_kind) {
+                "\r\n" => LineEndings::Windows,
+                "\n" => LineEndings::Unix,
+                // Fall back to \n in case upstream function changes
+                _ => LineEndings::Unix,
+            },
+        );
+
         let result = stylua_lib::format_code(
             file_text,
-            stylua_lib::Config::from(config),
+            stylua_config,
             None,
             match config.verify {
                 true => OutputVerification::Full,
