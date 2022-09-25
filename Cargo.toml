@@ -1,0 +1,22 @@
+[package]
+name = "dprint-plugin-stylua"
+version = "0.1.0"
+edition = "2021"
+authors = ["RubixDev"]
+homepage = "https://github.com/RubixDev/dprint-plugin-stylua"
+repository = "https://github.com/RubixDev/dprint-plugin-stylua"
+license = "GPL-3.0-only"
+description = "StyLua integration for dprint"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+crate-type = ["lib", "cdylib"]
+
+[dependencies]
+anyhow = "1.0.65"
+dprint-core = { version = "0.59.0", features = ["wasm"] }
+serde = { version = "1.0.145", features = ["derive"] }
+serde_json = "1.0.85"
+# TODO: Use official StyLua when merged and released
+stylua = { git = "https://github.com/RubixDev/StyLua", features = ["serialize", "fromstr"], default-features = false }
