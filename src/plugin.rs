@@ -95,7 +95,7 @@ impl SyncPluginHandler<Configuration> for StyluaPluginHandler {
             file_names: vec![],
             help_url: "https://github.com/RubixDev/dprint-plugin-stylua#readme".to_string(),
             config_schema_url: "".to_string(),
-            update_url: None,
+            update_url: Some("https://plugins.dprint.dev/RubixDev/stylua/latest.json".to_string()),
         }
     }
 
