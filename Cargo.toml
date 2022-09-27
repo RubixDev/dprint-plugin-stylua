@@ -13,6 +13,14 @@ description = "StyLua integration for dprint"
 [lib]
 crate-type = ["lib", "cdylib"]
 
+[features]
+default = ["lua52", "lua53", "lua54", "luau"]
+
+lua52 = ["stylua/lua52"]
+lua53 = ["stylua/lua53"]
+lua54 = ["stylua/lua54"]
+luau = ["stylua/luau"]
+
 [dependencies]
 anyhow = "1.0.65"
 dprint-core = { version = "0.59.0", features = ["wasm"] }
