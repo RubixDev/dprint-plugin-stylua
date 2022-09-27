@@ -93,7 +93,7 @@ impl SyncPluginHandler<Configuration> for StyluaPluginHandler {
             config_key: "stylua".to_string(),
             file_extensions: vec!["lua".to_string()],
             file_names: vec![],
-            help_url: "https://github.com/RubixDev/dprint-plugin-stylua#readme".to_string(),
+            help_url: concat!(env!("CARGO_PKG_REPOSITORY"), "#readme").to_string(),
             config_schema_url: "".to_string(),
             update_url: Some("https://plugins.dprint.dev/RubixDev/stylua/latest.json".to_string()),
         }
