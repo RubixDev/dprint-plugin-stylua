@@ -6,18 +6,7 @@ Format Lua code through [dprint](https://dprint.dev/) using
 ## Install
 
 Add the plugin to your config file by running
-`dprint config add RubixDev/stylua`. Alternatively you can manually add the
-plugin:
-
-```jsonc
-{
-  // ...etc...
-  "plugins": ["https://plugins.dprint.dev/RubixDev/stylua-v0.1.0.wasm"],
-  "stylua": {
-    // config goes here
-  }
-}
-```
+`dprint config add RubixDev/stylua`.
 
 Don't forget to add `lua` to your `includes` pattern.
 
