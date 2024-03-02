@@ -20,8 +20,9 @@ Don't forget to add `lua` to your `includes` pattern.
 | newLineKind             | NewLineKind             | global config or `lf`    | `auto`, `lf`, `crlf`, `system`                                       |
 | verify                  | bool                    | `false`                  | `true`, `false`                                                      |
 | quoteStyle              | QuoteStyle              | `AutoPreferDouble`       | `AutoPreferDouble`, `AutoPreferSingle`, `ForceDouble`, `ForceSingle` |
-| callParanetheses        | CallParenType           | `Always`                 | `Always`, `NoSingleString`, `NoSingleTable`, `None`                  |
+| callParenetheses        | CallParenType           | `Always`                 | `Always`, `NoSingleString`, `NoSingleTable`, `Input`, `None`         |
 | collapseSimpleStatement | CollapseSimpleStatement | `Never`                  | `Never`, `FunctionOnly`, `ConditionalOnly`, `Always`                 |
+| sortRequires            | bool                    | `false`                  | `true`, `false`                                                      |
 
 Also have a look at the
 [StyLua configuration](https://github.com/JohnnyMorganz/StyLua#options).
