@@ -5,7 +5,7 @@ use dprint_core::{
         self, ConfigKeyMap, GlobalConfiguration, ResolveConfigurationResult,
         RECOMMENDED_GLOBAL_CONFIGURATION,
     },
-    plugins::{FormatResult, PluginInfo, SyncPluginHandler},
+    plugins::{FileMatchingInfo, FormatResult, PluginInfo, SyncPluginHandler, SyncPluginInfo},
 };
 use stylua_lib::{LineEndings, OutputVerification};
 
@@ -61,19 +61,25 @@ impl SyncPluginHandler<Configuration> for StyluaPluginHandler {
             quote_style: configuration::get_value(
                 &mut config,
                 "quoteStyle",
-                default_config.quote_style(),
+                default_config.quote_style,
                 &mut diagnostics,
             ),
             call_parentheses: configuration::get_value(
                 &mut config,
                 "callParentheses",
-                default_config.call_parentheses(),
+                default_config.call_parentheses,
                 &mut diagnostics,
             ),
             collapse_simple_statement: configuration::get_value(
                 &mut config,
                 "collapseSimpleStatement",
-                default_config.collapse_simple_statement(),
+                default_config.collapse_simple_statement,
+                &mut diagnostics,
+            ),
+            sort_requires: configuration::get_value(
+                &mut config,
+                "sortRequires",
+                default_config.sort_requires.enabled,
                 &mut diagnostics,
             ),
         };
@@ -86,16 +92,22 @@ impl SyncPluginHandler<Configuration> for StyluaPluginHandler {
         }
     }
 
-    fn plugin_info(&mut self) -> PluginInfo {
-        PluginInfo {
-            name: env!("CARGO_PKG_NAME").to_string(),
-            version: env!("CARGO_PKG_VERSION").to_string(),
-            config_key: "stylua".to_string(),
-            file_extensions: vec!["lua".to_string()],
-            file_names: vec![],
-            help_url: concat!(env!("CARGO_PKG_REPOSITORY"), "#readme").to_string(),
-            config_schema_url: "".to_string(),
-            update_url: Some("https://plugins.dprint.dev/RubixDev/stylua/latest.json".to_string()),
+    fn plugin_info(&mut self) -> SyncPluginInfo {
+        SyncPluginInfo {
+            info: PluginInfo {
+                name: env!("CARGO_PKG_NAME").to_string(),
+                version: env!("CARGO_PKG_VERSION").to_string(),
+                config_key: "stylua".to_string(),
+                help_url: concat!(env!("CARGO_PKG_REPOSITORY"), "#readme").to_string(),
+                config_schema_url: "".to_string(),
+                update_url: Some(
+                    "https://plugins.dprint.dev/RubixDev/stylua/latest.json".to_string(),
+                ),
+            },
+            file_matching: FileMatchingInfo {
+                file_extensions: vec!["lua".to_string()],
+                file_names: vec![],
+            },
         }
     }
 
@@ -106,21 +118,23 @@ impl SyncPluginHandler<Configuration> for StyluaPluginHandler {
     fn format(
         &mut self,
         _file_path: &Path,
-        file_text: &str,
+        file_text: Vec<u8>,
         config: &Configuration,
-        _format_with_host: impl FnMut(&Path, String, &ConfigKeyMap) -> FormatResult,
+        _format_with_host: impl FnMut(&std::path::Path, Vec<u8>, &ConfigKeyMap) -> FormatResult,
     ) -> FormatResult {
-        let stylua_config = stylua_lib::Config::from(config).with_line_endings(
-            match configuration::resolve_new_line_kind(file_text, config.new_line_kind) {
+        let file_text = String::from_utf8(file_text)?;
+
+        let mut stylua_config = stylua_lib::Config::from(config);
+        stylua_config.line_endings =
+            match configuration::resolve_new_line_kind(&file_text, config.new_line_kind) {
                 "\r\n" => LineEndings::Windows,
                 "\n" => LineEndings::Unix,
                 // Fall back to \n in case upstream function changes
                 _ => LineEndings::Unix,
-            },
-        );
+            };
 
         let result = stylua_lib::format_code(
-            file_text,
+            &file_text,
             stylua_config,
             None,
             match config.verify {
@@ -131,7 +145,7 @@ impl SyncPluginHandler<Configuration> for StyluaPluginHandler {
         if result == file_text {
             Ok(None)
         } else {
-            Ok(Some(result))
+            Ok(Some(result.into_bytes()))
         }
     }
 }
